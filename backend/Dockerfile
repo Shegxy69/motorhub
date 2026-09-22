@@ -13,7 +13,7 @@ RUN pip install -r requirements.txt
 # 5. Copy the actual application code (app.py) into the container
 COPY app.py .
 
-# 6. Expose the port so traffic can reach it (Backend uses 5000, Frontend uses 8080)
+# 6. Expose the port so traffic can reach it (Backend uses 5000) 
 EXPOSE 5000
 
 # 7. The command that runs when the container starts
