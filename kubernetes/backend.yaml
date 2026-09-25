@@ -15,10 +15,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: shegxy69/motorhub-backend:v2
-        containers:
-      - name: backend
-        image: shegxy69/motorhub-backend:v2
+        image: shegxy69/motorhub-backend:v3
         resources:           # <--- ADD THIS
           requests:          # <--- ADD THIS
             cpu: "10m"       # <--- ADD THIS (Means 10 millicores of CPU)
