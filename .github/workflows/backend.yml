@@ -35,4 +35,4 @@ jobs:
           context: ./backend                  # Where is the Dockerfile located?
       # Only push if the branch is exactly 'main'
           push: ${{ github.ref == 'refs/heads/main' }}    # Yes, upload it to Docker Hub
-          tags: shegxy69/motorhub-backend:v2  # What to name the image
+          tags: shegxy69/motorhub-backend:v3  # What to name the image
