@@ -1,6 +1,6 @@
 name: Build Backend
 
-# 1. THE TRIGGER: W
+# 1. THE TRIGGER: 
 on:
   push:
     branches: [ "main" ]
@@ -33,5 +33,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./backend                  # Where is the Dockerfile located?
-          push: ${{ github.ref == 'refs/heads/main' }}                           # Yes, upload it to Docker Hub
-          tags: shegxy69/motorhub-backend:v1  # What to name the image
+      # Only push if the branch is exactly 'main'
+          push: ${{ github.ref == 'refs/heads/main' }}    # Yes, upload it to Docker Hub
+          tags: shegxy69/motorhub-backend:v2  # What to name the image

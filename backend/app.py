@@ -31,6 +31,26 @@ CARTS = {}
 def get_db_connection():
     return psycopg2.connect(host=DB_HOST, user=DB_USER, password=DB_PASS, dbname="motorhub")
 
+def init_db():
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(50) UNIQUE NOT NULL,
+                password VARCHAR(50) NOT NULL
+            );
+        ''')
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception:
+        print("Database not ready yet...")
+
+# Call it before the app starts
+init_db()
+
 @app.route('/auth', methods=['POST'])
 def auth():
     data = request.json or {}
@@ -62,28 +82,6 @@ def auth():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-def init_db():
-    try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute('''
-            CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY,
-                username VARCHAR(50) UNIQUE NOT NULL,
-                password VARCHAR(50) NOT NULL
-            );
-        ''')
-        conn.commit()
-        cur.close()
-        conn.close()
-    except Exception:
-        print("Database not ready yet...")
-
-
-# Call it before the app starts
-init_db()
-
 @app.route('/cars', methods=['GET'])
 def get_cars():
     return jsonify(CARS)
@@ -92,15 +90,16 @@ def get_cars():
 def cart():
     payload = request.get_json(silent=True) or {}
     username = payload.get('username')
+    car_id = payload.get('car_id')
 
-    if request.method == 'POST':
-        car_id = payload.get('car_id')
+    # Only try to add a car if they actually sent a car_id
+    if request.method == 'POST' and car_id is not None:
         car = next((c for c in CARS if c['id'] == int(car_id)), None)
         if car:
             CARTS.setdefault(username, []).append(car)
             return jsonify({"message": f"{car['make']} added to cart!", "currency": "USD"})
 
-    # GET cart
+    # Return the cart totals
     user_cart = CARTS.get(username, [])
     total = sum(item['price'] for item in user_cart)
     return jsonify({"cart": user_cart, "total": total, "currency": "USD"})
